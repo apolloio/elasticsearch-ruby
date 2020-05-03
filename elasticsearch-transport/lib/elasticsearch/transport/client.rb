@@ -149,6 +149,10 @@ module Elasticsearch
       #
       def perform_request(method, path, params={}, body=nil, headers=nil)
         method = @send_get_body_as if 'GET' == method && body
+        if (opaque_id = params.delete(:opaque_id))
+          headers = {} if headers.nil?
+          headers.merge!('X-Opaque-Id' => opaque_id)
+        end
         transport.perform_request(method, path, params, body, headers)
       end
 
