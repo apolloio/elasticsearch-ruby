@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#
+# Runs the client tests via Docker with the expectation that the required
+# environment variables have already been exported before running this script.
+#
+# The required environment variables include:
+#
+#   - $TEST_SUITE
+#
+
+set -eo pipefail
+
+export RUBY_TEST_VERSION=${RUBY_TEST_VERSION:-2.6.1}
+export ELASTICSEARCH_VERSION=${ELASTICSEARCH_VERSION:-7.4.2}
+export SINGLE_TEST=${SINGLE_TEST}
+
+set +x
+export VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")
+unset VAULT_ROLE_ID VAULT_SECRET_ID VAULT_TOKEN
+set -x
+
+function cleanup {
+  docker container rm --force --volumes elasticsearch > /dev/null 2>&1 || true
+  docker container rm --force --volumes elasticsearch-ruby > /dev/null 2>&1 || true
+  docker network rm esnet > /dev/null
+}
+
+trap cleanup EXIT
+
+# create network and volume
+docker network create esnet
+
+# create client image
+docker build \
+  --file .ci/Dockerfile \
+  --tag elastic/elasticsearch-ruby \
+  --build-arg RUBY_TEST_VERSION=${RUBY_TEST_VERSION} \
+  .
+
+
+sh .ci/docker/run-${TEST_SUITE}

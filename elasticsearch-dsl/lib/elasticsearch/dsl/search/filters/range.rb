@@ -1,0 +1,44 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
+module Elasticsearch
+  module DSL
+    module Search
+      module Filters
+
+        # A filter which returns documents that have terms in a specified range
+        #
+        # @example
+        #
+        #     search do
+        #       query do
+        #         filtered do
+        #           filter do
+        #             range :age do
+        #               gte 10
+        #               lte 20
+        #             end
+        #           end
+        #         end
+        #       end
+        #     end
+        #
+        # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html
+        #
+        class Range
+          include BaseComponent
+
+          option_method :gte
+          option_method :gt
+          option_method :lte
+          option_method :lt
+          option_method :boost
+          option_method :time_zone
+          option_method :format
+        end
+
+      end
+    end
+  end
+end

@@ -1,0 +1,14 @@
+.config
+.yardoc
+_yardoc
+coverage
+**/test/reports/
+**/test/html_reports/
+doc/
+rdoc/
+tmp
+Gemfile.lock
+.DS_Store
+*.log
+.idea/*
+profile/**/data/*.json
