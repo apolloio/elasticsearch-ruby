@@ -153,6 +153,11 @@ module Elasticsearch
           headers = {} if headers.nil?
           headers.merge!('X-Opaque-Id' => opaque_id)
         end
+        if (routing = params.delete(:routing))
+        end
+        puts "params=#{params}"
+        puts "path=#{path}"
+        puts "body=#{body}"
         transport.perform_request(method, path, params, body, headers)
       end
 
